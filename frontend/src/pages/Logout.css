@@ -1,0 +1,30 @@
+.logout-container {
+    text-align: center;
+    padding: 20px;
+    font-size: 1.5em;
+    background-color: #f4f4f4;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .logout-container h2 {
+    color: #4CAF50;  /* Green color for the message */
+    font-size: 2em;
+    margin-bottom: 20px;
+  }
+  
+  .logout-container p {
+    color: #333;  /* Dark text color */
+    font-size: 1.2em;
+  }
+  
+  .logout-container a {
+    text-decoration: none;
+    color: #007bff;
+    font-weight: bold;
+    margin-top: 20px;
+  }
+  
