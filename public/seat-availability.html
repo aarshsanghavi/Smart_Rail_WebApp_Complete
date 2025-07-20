@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seat Availability - Indian Railways</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-container">
+            <div class="logo">
+                <img src="https://upload.wikimedia.org/wikipedia/en/thumb/8/83/Indian_Railways.svg/1200px-Indian_Railways.svg.png"
+                    alt="Indian Railways Logo">
+                <h1>Indian Railways</h1>
+            </div>
+            <nav class="nav-menu">
+                <a href="/"><i class="fas fa-home"></i> Home</a>
+                <a href="/register.html"><i class="fas fa-user-plus"></i> Register</a>
+                <a href="/pnr-status.html"><i class="fas fa-ticket-alt"></i> PNR Status</a>
+                <a href="/train-schedule.html"><i class="fas fa-train"></i> Train Schedule</a>
+                <a href="/seat-availability.html"><i class="fas fa-chair"></i> Seat Availability</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-container">
+        <div class="availability-container">
+            <h2><i class="fas fa-chair"></i> Check Seat Availability</h2>
+            <form id="availabilityForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="trainNumber"><i class="fas fa-train"></i> Train Number</label>
+                        <input type="text" id="trainNumber" name="trainNumber" placeholder="Enter train number"
+                            required>
+                    </div>
+                    <div class="form-group">
+                        <label for="travelDate"><i class="fas fa-calendar-alt"></i> Travel Date</label>
+                        <input type="date" id="travelDate" name="travelDate" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="ticketClass"><i class="fas fa-couch"></i> Class</label>
+                        <select id="ticketClass" name="ticketClass" required>
+                            <option value="">Select Class</option>
+                            <option value="first_ac">First AC (1A)</option>
+                            <option value="second_ac">Second AC (2A)</option>
+                            <option value="third_ac">Third AC (3A)</option>
+                            <option value="sleeper">Sleeper (SL)</option>
+                            <option value="general">General (GN)</option>
+                        </select>
+                    </div>
+                </div>
+                <button type="submit" class="btn"><i class="fas fa-search"></i> Check Availability</button>
+            </form>
+        </div>
+
+        <!-- Loading Animation -->
+        <div id="loading" class="loading" style="display: none;">
+            <i class="fas fa-spinner"></i>
+        </div>
+
+        <!-- Results Container -->
+        <div id="result" class="result-container" style="display: none;">
+            <h2><i class="fas fa-info-circle"></i> Availability Result</h2>
+            <div id="availabilityResult"></div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="/"><i class="fas fa-home"></i> Home</a></li>
+                    <li><a href="/register.html"><i class="fas fa-user-plus"></i> Register</a></li>
+                    <li><a href="/pnr-status.html"><i class="fas fa-ticket-alt"></i> PNR Status</a></li>
+                    <li><a href="/train-schedule.html"><i class="fas fa-train"></i> Train Schedule</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Services</h3>
+                <ul>
+                    <li><a href="/seat-availability.html"><i class="fas fa-chair"></i> Seat Availability</a></li>
+                    <li><a href="/passenger-list.html"><i class="fas fa-users"></i> Passenger List</a></li>
+                    <li><a href="/ticket-details.html"><i class="fas fa-file-alt"></i> Ticket Details</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Contact Us</h3>
+                <ul>
+                    <li><i class="fas fa-phone"></i> 139 (Toll Free)</li>
+                    <li><i class="fas fa-envelope"></i> support@indianrailways.com</li>
+                    <li><i class="fas fa-map-marker-alt"></i> New Delhi, India</li>
+                </ul>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-facebook"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-youtube"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="copyright">
+            <p>&copy; 2024 Indian Railways. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.getElementById('availabilityForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const trainNumber = document.getElementById('trainNumber').value;
+            const travelDate = document.getElementById('travelDate').value;
+            const ticketClass = document.getElementById('ticketClass').value;
+
+            // Show loading animation
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('result').style.display = 'none';
+
+            try {
+                const response = await fetch(`/check-availability?train_number=${trainNumber}&travel_date=${travelDate}&class=${ticketClass}`);
+                const data = await response.json();
+
+                const resultDiv = document.getElementById('result');
+                const availabilityResult = document.getElementById('availabilityResult');
+
+                if (data.success) {
+                    availabilityResult.innerHTML = `
+                        <div class="success-message">
+                            <p><i class="fas fa-check-circle"></i> Available Seats: ${data.available_seats}</p>
+                        </div>
+                    `;
+                } else {
+                    availabilityResult.innerHTML = `
+                        <div class="error-message">
+                            <p><i class="fas fa-exclamation-circle"></i> ${data.message}</p>
+                        </div>
+                    `;
+                }
+                resultDiv.style.display = 'block';
+            } catch (error) {
+                console.error('Error:', error);
+                const resultDiv = document.getElementById('result');
+                const availabilityResult = document.getElementById('availabilityResult');
+                availabilityResult.innerHTML = `
+                    <div class="error-message">
+                        <p><i class="fas fa-exclamation-circle"></i> An error occurred while checking availability. Please try again.</p>
+                    </div>
+                `;
+                resultDiv.style.display = 'block';
+            } finally {
+                // Hide loading animation
+                document.getElementById('loading').style.display = 'none';
+            }
+        });
+    </script>
+</body>
+
+</html>
